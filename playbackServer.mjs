@@ -172,11 +172,12 @@ class ReplayPreprocessor {
 					squad = data.squadId;
 				}
 			} else {
-				if (op == SendAction.EVAL_CODE) continue;
 				if (op == SendAction.JOINED_GAME_ID) continue;
 				if (op == SendAction.PLAYER_OWNERSHIP) continue;
 				if (op == SendAction.GAME_END_ACCOUNT_STATS) continue;
 				if (op == SendAction.GUEST_DATA_CHANGED) continue;
+				if (op == SendAction.EVAL_CODE) continue;
+				if (op == SendAction.LOGOUT) continue;
 				if (op == SendAction.GAMEMODE) {
 					const mr = new MessageReader(msg.data.buffer);
 					const op = mr.getUint32();
@@ -437,7 +438,7 @@ class ReplayThing {
 			ws.send(mw.start(SendAction.CHAT_MESSAGE).addJSON(data).ok());
 		}
 		if (op == ReceiveAction.REQUEST_SQUAD_ID) {
-			ws.send(mw.start(SendAction.SQUAD_ID_RESPONSE).addString(this.squadCode).ok());
+			ws.send(mw.start(SendAction.SQUAD_ID_RESPONSE).addString("NSQD").ok());
 			//ws.send(mw.start(SendAction.SQUAD_JOIN_ERROR_RESPONSE).addString("Not supported for replays").ok());
 		}
 	}
@@ -491,6 +492,7 @@ const SendAction = {
 	UPDATE_PLAYER_FLY_ENABLED: 44,
 	EVAL_CODE: 55,
 	GAMEMODE: 56,
+	LOGOUT: 61,
 }
 const ReceiveAction = {
 	MY_CLIENT_VERSION: 0,

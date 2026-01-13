@@ -5,10 +5,10 @@
 ██║░╚███║██║░░██║██║░░██║██║░░██║╚█████╔╝░░╚██╔╝░╚██╔╝░██╗╚█████╔╝██║░╚███║███████╗
 ╚═╝░░╚══╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝╚══════╝
 █▀█ █▀▀ █▀█ █   ▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄ 
-█▀▄ ██▄ █▀▀ █▄▄ █▀█  █    █ ▀ █ █▄█ █▄▀ v1.0.0 by Xeltalliv
+█▀▄ ██▄ █▀▀ █▄▄ █▀█  █    █ ▀ █ █▄█ █▄▀ v1.1 by Xeltalliv
 
 Record everything that happens in Narrow One matches to view it later as a spectator.
-Packaged on 2nd of July 2025, compatible with Narrow One v1750859997.
+Packaged on 26nd of July 2025, compatible with Narrow One v1752617798.
 
 === Installation ===
 1. Unpack this archive.
@@ -55,7 +55,7 @@ result in 1 connection error happening in the background, every time you join a 
 
 
 === Copyright ===
-Use, modify, but do not distribute to anyone.
+Use, modify, but please do not distribute.
 Especially don't post it to github, greasyfork, pastebin, etc.
 
 
@@ -66,3 +66,8 @@ Especially don't post it to github, greasyfork, pastebin, etc.
 4. Start viewing replay
 5. Fly around smoothly
 Spam space bar and shift at different frequencies to smoothly adjust your vertical flight speed
+
+
+=== Changelog ===
+v1.0 Release
+v1.1 Added ability to start squad in matches that weren't squaded (to be able to run commands)
