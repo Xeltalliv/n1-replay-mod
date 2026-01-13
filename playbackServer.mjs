@@ -3,7 +3,12 @@
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import process from "node:process";
+import url from "node:url";
+import path from "node:path";
 import { WebSocketServer } from "ws";
+
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const versionCheck = false;
 
@@ -13,7 +18,7 @@ console.log("use https://narrow.one/?ip=ws://localhost:8081/YOUR_REPLAY_FILE_HER
 
 wss.on("connection", async (ws, req) => {
 	try {
-		const preprocessor = new ReplayPreprocessor(respawnWeaponFix(unlag(await parser.parse(`data${req.url}`))));
+		const preprocessor = new ReplayPreprocessor(respawnWeaponFix(unlag(await parser.parse(path.join(__dirname, "data", req.url)))));
 		new ReplayThing(ws, preprocessor);
 	} catch (e) {
 		ws.close();

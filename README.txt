@@ -71,3 +71,4 @@ Spam space bar and shift at different frequencies to smoothly adjust your vertic
 === Changelog ===
 v1.0 Release
 v1.1 Added ability to start squad in matches that weren't squaded (to be able to run commands)
+v1.2 Servers no longer depend on current working directory
