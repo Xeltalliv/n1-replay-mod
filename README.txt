@@ -5,10 +5,10 @@
 ██║░╚███║██║░░██║██║░░██║██║░░██║╚█████╔╝░░╚██╔╝░╚██╔╝░██╗╚█████╔╝██║░╚███║███████╗
 ╚═╝░░╚══╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝╚══════╝
 █▀█ █▀▀ █▀█ █░░ ▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄
-█▀▄ ██▄ █▀▀ █▄▄ █▀█ ░█░   █░▀░█ █▄█ █▄▀ v1.4 by Xeltalliv
+█▀▄ ██▄ █▀▀ █▄▄ █▀█ ░█░   █░▀░█ █▄█ █▄▀ v1.5 by Xeltalliv
 
 Record everything that happens in Narrow One matches to view it later as a spectator.
-Packaged on 4th of September 2025.
+Packaged on 22nd of November 2025.
 
 === Theory behind how it works ===
 Creating replays requires constantly recording and later restoring the states of the game.
@@ -53,7 +53,7 @@ So if you feel like origanizing it into directories, you can.
 
 
 === Viewing the replays ===
-1. Launch "playbackSever.mjs" using NodeJS.
+1. Launch "playbackServer.mjs" using NodeJS.
 2. Go to URL in your browser: https://narrow.one/?ip=ws://localhost:8081/YOUR_REPLAY_FILE_HERE.nnc
    Example: https://narrow.one/?ip=ws://localhost:8081/replay_1745157304986.nnc
    This tells the game to connect to custom server running on your computer, instead of real game servers.
@@ -90,7 +90,7 @@ It doesn't break often.
 
 
 === Copyright ===
-Use, modify, but please do not distribute.
+You can use, modify, but please do not distribute.
 Especially don't post it to github, greasyfork, pastebin, etc. where it's easily searchable.
 
 
@@ -117,3 +117,4 @@ v1.4 Fixed held item being stuck with wrong weather
      Made "/stop" command instant
      Added "/resume" command
      Added "/getskin" command
+v1.5 Replay recorder client no longer records guest account data

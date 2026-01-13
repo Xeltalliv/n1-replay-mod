@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Replay Recorder Client [Tampermonkey Edition]
 // @namespace    http://tampermonkey.net/
-// @version      2025-02-08
+// @version      2025-11-22
 // @description  Record Narrow One matches to view them later
 // @author       Xeltalliv
 // @match        https://narrow.one/*
@@ -105,6 +105,7 @@ class ReplayRecorder {
         const messageOP = (new Uint8Array(message))[0] + direction * 128;
         const messageLengthU8 = toVLE(messageU8.byteLength);
         if (messageOP == 144) return; // Do not record ACCOUNT_SESSION_DATA
+        if (messageOP == 24) return; // Do not record GUEST_DATA_CHANGED
         if (messageOP == 55) return; // Waste of space
         if (messageOP == 160) return; // Waste of space
         this.replayLastTime = now;
