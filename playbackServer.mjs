@@ -13,12 +13,27 @@ const __dirname = path.dirname(__filename);
 const versionCheck = false;
 
 const wss = new WebSocketServer({ port: 8081 });
-console.log("listening on ws://localhost:8081");
-console.log("use https://narrow.one/?ip=ws://localhost:8081/YOUR_REPLAY_FILE_HERE.bin");
 
+wss.on("listening", () => {
+	console.log("listening on ws://localhost:8081");
+	console.log("use https://narrow.one/?ip=ws://localhost:8081/YOUR_REPLAY_FILE_HERE.nnc");
+});
+wss.on("error", (err) => {
+	if (err.code === "EADDRINUSE") {
+		console.error("Error: port 8081 is already in use by something else.");
+		console.error("another copy of playback server may already be running.");
+	} else {
+		console.error(err);
+	}
+	process.exit(1);
+});
 wss.on("connection", async (ws, req) => {
 	try {
-		const preprocessor = new ReplayPreprocessor(respawnWeaponFix(unlag(await parser.parse(path.join(__dirname, "data", req.url)))));
+		const filepath = path.join(__dirname, "data", req.url);
+		const msgs1 = await parser.parse(filepath);
+		const msgs2 = unlag(msgs1);
+		const msgs3 = respawnWeaponFix(msgs2)
+		const preprocessor = new ReplayPreprocessor(msgs3);
 		new ReplayThing(ws, preprocessor);
 	} catch (e) {
 		ws.close();
@@ -61,8 +76,19 @@ class RawParser {
 	hasMore() {
 		return this.index < this.buffer.byteLength;
 	}
+	async readFile(filename) {
+		try {
+			return await fsp.readFile(filename);
+		} catch(e) {
+			if (e.code == "ENOENT") {
+				throw `file '${filename}' was not found.`;
+			} else {
+				throw e;
+			}
+		}
+	}
 	async parse(filename) {
-		const fileBuffer = await fsp.readFile(filename);
+		const fileBuffer = await this.readFile(filename);
 		this.index = 0;
 		this.buffer = fileBuffer.buffer;
 		this.arrayU8 = fileBuffer;
@@ -269,6 +295,9 @@ class SendScheduler {
 		this.start -= amount;
 		this.next();
 	}
+	now() {
+		return Date.now() - this.start;
+	}
 	next() {
 		if (this.stopped) return;
 		const ws = this.ws;
@@ -362,9 +391,9 @@ class ReplayThing {
 			ws.send(mw.start(SendAction.CHANGE_SELECTED_CLASS).addUint32(this.id).addUint32(this.selectedClass).ok());
 			ws.send(mw.start(SendAction.ACTIVE_WEAPON_TYPE).addUint32(this.id).addUint32(this.selectedWeapon).ok());
 			ws.send(mw.start(SendAction.EQUIPPED_SKIN_DATA).addUint32(this.id).addString(this.equippedSkinData).ok());
-			ws.send(mw.start(SendAction.SPAWN).addUint32(this.id).addUint32(this.spawnId).addUint32(this.spawnId).ok());
 			ws.send(mw.start(SendAction.PLAYER_NAME_VERIFIED).addUint32(this.id).ok()); // Why not :)
 			ws.send(mw.start(SendAction.PLAYER_OWNERSHIP).addUint32(this.id).addUint32(true).ok());
+			ws.send(mw.start(SendAction.SPAWN).addUint32(this.id).addUint32(this.spawnId).addUint32(this.spawnId).ok());
 			ws.send(mw.start(SendAction.SQUAD_ID_RESPONSE).addString(this.squadCode).ok());
 
 			this.sendScheduler = new SendScheduler(ws, this.preprocessor.messages, this.preprocessor.duration);
@@ -432,6 +461,11 @@ class ReplayThing {
 				const parts = message.slice(1).split(" ");
 				if (parts[0] == "skip") {
 					const msToSkip = (+parts[1] || 0) * 1000 * 60;
+					this.sendScheduler.fastForward(msToSkip);
+					ws.send(mw.start(SendAction.EVAL_CODE).addJSON({id:0, c:`main.now+=${msToSkip};main.gameManager.activeGame.appearingObjectsManager.loop(0,${msToSkip});`}).ok());
+				}
+				if (parts[0] == "skipto") {
+					const msToSkip = (+parts[1] || 0) * 1000 * 60 - this.sendScheduler.now();
 					this.sendScheduler.fastForward(msToSkip);
 					ws.send(mw.start(SendAction.EVAL_CODE).addJSON({id:0, c:`main.now+=${msToSkip};main.gameManager.activeGame.appearingObjectsManager.loop(0,${msToSkip});`}).ok());
 				}
