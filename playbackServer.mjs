@@ -10,7 +10,9 @@ import { WebSocketServer } from "ws";
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// You can edit those:
 const versionCheck = false;
+const clientsideJS = true;
 
 const wss = new WebSocketServer({ port: 8081 });
 
@@ -182,6 +184,7 @@ class ReplayPreprocessor {
 		let gamemode = 1;
 		let squad = "";
 		let duration = 0;
+		let gameSeed = 0;
 		let lastFlagOpHash = "";
 		const playerNames = new Map();
 		for(const msg of msgs1) {
@@ -209,6 +212,12 @@ class ReplayPreprocessor {
 				if (op == SendAction.GUEST_DATA_CHANGED) continue;
 				if (op == SendAction.EVAL_CODE) continue;
 				if (op == SendAction.LOGOUT) continue;
+				if (op == SendAction.GAME_SEED) {
+					const mr = new MessageReader(msg.data.buffer);
+					const op = mr.getUint32();
+					gameSeed = mr.getUint32();
+					continue;
+				}
 				if (op == SendAction.GAMEMODE) {
 					const mr = new MessageReader(msg.data.buffer);
 					const op = mr.getUint32();
@@ -269,6 +278,7 @@ class ReplayPreprocessor {
 		this.squadCode = squad;
 		this.duration = duration;
 		this.gamemode = gamemode;
+		this.gameSeed = gameSeed;
 	}
 }
 
@@ -280,6 +290,7 @@ class SendScheduler {
 		this.msgs = msgs;
 		this.start = Date.now();
 		this.stopped = false;
+		this.stoppedAt = 0;
 		this.duration = duration;
 		this.logInterval = setInterval(this.log.bind(this), 1000);
 		this.timeouts = new Set();
@@ -330,8 +341,18 @@ class SendScheduler {
 		process.stdout.write(`[${bar}] ${formatTime(time)}/${formatTime(maxTime)} ${progress}%`);
 	}
 	stop() {
+		if (this.stopped) return;
+		this.unschedule();
 		this.stopped = true;
+		this.stoppedAt = Date.now() - this.start;
 		clearInterval(this.logInterval);
+	}
+	resume() {
+		if (!this.stopped) return;
+		this.stopped = false;
+		this.start = Date.now() - this.stoppedAt;
+		this.logInterval = setInterval(this.log.bind(this), 1000);
+		this.next();
 	}
 }
 
@@ -343,6 +364,7 @@ class ReplayThing {
 		this.clientVersion = preprocessor.clientVersion;
 		this.preprocessor = preprocessor;
 		this.squadCode = preprocessor.squadCode;
+		this.gameSeed = preprocessor.gameSeed;
 
 		this.state = ConnectionState.NOTHING_YET;
 		this.startTime = 0;
@@ -352,8 +374,6 @@ class ReplayThing {
 		this.selectedWeapon = 0;
 		this.equippedSkinData = "";
 		this.spawnId = 0;
-		this.data = new Uint8Array(12);
-		this.dataSet = false;
 		this.ws = ws;
 		this.sendScheduler = null;
 		ws.on("message", this.handle.bind(this));
@@ -378,6 +398,7 @@ class ReplayThing {
 			ws.send(mw.start(SendAction.JOINED_GAME_ID).addUint32(this.gameId).ok());
 			ws.send(mw.start(SendAction.GAMEMODE).addString(this.gamemode).ok());
 			ws.send(mw.start(SendAction.GAME_MAP_HASH).addString(this.mapHash).ok());
+			ws.send(mw.start(SendAction.GAME_SEED).addUint32(this.gameSeed).ok());
 		}
 		if (op == ReceiveAction.CURRENT_LOADED_MAP_HASH) {
 			if (this.state !== ConnectionState.WAITING_MAP) return;
@@ -430,10 +451,6 @@ class ReplayThing {
 		if (this.state !== ConnectionState.MAIN) return;
 
 
-		if (op == ReceiveAction.PLAYER_DATA) { // TODO: process positions to make player visible
-			this.data.set(new Uint8Array(bin.buffer, 4, 12));
-			this.dataSet = true;
-		}
 		if (op == ReceiveAction.PLAYER_PERFORM_ACTION) {
 			const playerId = mr.getUint32();
 			const actionId = mr.getUint32();
@@ -460,17 +477,66 @@ class ReplayThing {
 			if (message[0] == "/") {
 				const parts = message.slice(1).split(" ");
 				if (parts[0] == "skip") {
-					const msToSkip = (+parts[1] || 0) * 1000 * 60;
+					const msToSkip = Math.max(0, (+parts[1] || 0) * 1000 * 60);
 					this.sendScheduler.fastForward(msToSkip);
-					ws.send(mw.start(SendAction.EVAL_CODE).addJSON({id:0, c:`main.now+=${msToSkip};main.gameManager.activeGame.appearingObjectsManager.loop(0,${msToSkip});`}).ok());
+					if (clientsideJS) ws.send(mw.start(SendAction.EVAL_CODE).addJSON({id:0, c:`main.now+=${msToSkip};main.gameManager.activeGame.appearingObjectsManager.loop(0,${msToSkip});`}).ok());
 				}
 				if (parts[0] == "skipto") {
-					const msToSkip = (+parts[1] || 0) * 1000 * 60 - this.sendScheduler.now();
+					const msToSkip = Math.max(0, (+parts[1] || 0) * 1000 * 60 - this.sendScheduler.now());
 					this.sendScheduler.fastForward(msToSkip);
-					ws.send(mw.start(SendAction.EVAL_CODE).addJSON({id:0, c:`main.now+=${msToSkip};main.gameManager.activeGame.appearingObjectsManager.loop(0,${msToSkip});`}).ok());
+					if (clientsideJS) ws.send(mw.start(SendAction.EVAL_CODE).addJSON({id:0, c:`main.now+=${msToSkip};main.gameManager.activeGame.appearingObjectsManager.loop(0,${msToSkip});`}).ok());
 				}
 				if (parts[0] == "stop") {
 					this.sendScheduler.stop();
+				}
+				if (parts[0] == "resume") {
+					this.sendScheduler.resume();
+				}
+				if (parts[0] == "getskin" && clientsideJS) {
+					ws.send(mw.start(SendAction.EVAL_CODE).addJSON({id:0, c:`
+const activeGame = main.gameManager.activeGame;
+const myPlayer = activeGame.getMyPlayer();
+const camera = main.cam.cam;
+
+function notification(text) {
+    const notifUI = activeGame.scoreOffsetNotificationsUi;
+    const innerDiv = document.createElement("div");
+    innerDiv.classList.add("scoreOffsetNotificationAnim");
+    innerDiv.style.animation = "1s notificationIconFade 2s both, 0.2s notificationIconPop";
+    innerDiv.appendChild(document.createTextNode(text));
+    const outerDiv = document.createElement("div");
+    outerDiv.classList.add("scoreOffsetNotification");
+    outerDiv.appendChild(innerDiv);
+    notifUI.listEl.appendChild(outerDiv);
+    notifUI.createdNotifications.unshift({
+        el: outerDiv,
+        destroyTime: Date.now() + 3000
+    });
+    notifUI.destroyOldNotifications();
+    notifUI.updateNotificationOffsets();
+}
+
+let minDistance = Infinity, minPlayer = null;
+for(const player of activeGame.players.values()) {
+    if (player === myPlayer) continue;
+    const ndcPos = player.pos.clone();
+    ndcPos.y += 1;
+    ndcPos.project(camera);
+    const distance = Math.sqrt(ndcPos.x * ndcPos.x + ndcPos.y * ndcPos.y);
+    if (distance < minDistance && Math.abs(ndcPos.z) < 1) {
+        minDistance = distance;
+        minPlayer = player;
+    }
+}
+if (minPlayer === null) {
+	notification("no players found");
+} else {
+	main.skins.skinPresets.push(minPlayer.equippedSkinData);
+	main.skins.savePresets();
+	main.skins.fireConfigChanged();
+	notification(minPlayer.playerName + "'s skin was added");
+}
+`}).ok());
 				}
 				return;
 			}

@@ -5,10 +5,10 @@
 ██║░╚███║██║░░██║██║░░██║██║░░██║╚█████╔╝░░╚██╔╝░╚██╔╝░██╗╚█████╔╝██║░╚███║███████╗
 ╚═╝░░╚══╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝╚══════╝
 █▀█ █▀▀ █▀█ █░░ ▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄
-█▀▄ ██▄ █▀▀ █▄▄ █▀█ ░█░   █░▀░█ █▄█ █▄▀ v1.3 by Xeltalliv
+█▀▄ ██▄ █▀▀ █▄▄ █▀█ ░█░   █░▀░█ █▄█ █▄▀ v1.4 by Xeltalliv
 
 Record everything that happens in Narrow One matches to view it later as a spectator.
-Packaged on 10th of August 2025.
+Packaged on 4th of September 2025.
 
 === Theory behind how it works ===
 Creating replays requires constantly recording and later restoring the states of the game.
@@ -71,6 +71,8 @@ To view replays you need to have playback server running and open specific url i
 1. Type "/skip <minutes>" in chat to fast forward by specified amount of minutes.
 2. Type "/skipto <minutes>" in chat to fast forward to specified amount of minutes.
 3. Type "/stop" in chat to freeze the replay.
+4. Type "/resume" in chat to resume playback of replay.
+5. Type "/getskin" in chat while looking at player to add their skin to your presets.
 
 If it is a non-squaded match and you want to run commands, press Esc
 and press the "Squad" button on the left.
@@ -79,7 +81,7 @@ and press the "Squad" button on the left.
 === Disclaimers ===
 1. Replays depend on the version of the game they were recorded in and therefore
    degarde and expire over time!
-2. For now, the mod sanitizes replays so that they can't be malicious.
+2. For now, the mod sanitizes replays, so that they can't do any harm.
    While unlikely, future versions of the game might introduce new unsafe things
    that the mod wouldn't be prepared for.
 
@@ -92,7 +94,7 @@ Use, modify, but please do not distribute.
 Especially don't post it to github, greasyfork, pastebin, etc. where it's easily searchable.
 
 
-=== A satisfyling thing to try ===
+=== A satisfying thing to try ===
 1. Record a match.
 2. Disable UI, disable showing weapon, enable smooth camera, enable spectator flight, unequip melee.
 3. Launch your favourite playlist of fitting music.
@@ -111,3 +113,7 @@ v1.3 Fixed spectator spawn point
      Changed file extension from .bin to .nnc
      Removed "File stream closed" when recording
      Added "/skipto <minutes>" command
+v1.4 Fixed held item being stuck with wrong weather
+     Made "/stop" command instant
+     Added "/resume" command
+     Added "/getskin" command
