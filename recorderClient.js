@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Replay Recorder Client [Tampermonkey Edition]
 // @namespace    http://tampermonkey.net/
-// @version      2025-11-22
+// @version      2026-01-13
 // @description  Record Narrow One matches to view them later
 // @author       Xeltalliv
 // @match        https://narrow.one/*
@@ -148,3 +148,4 @@ window.WebSocket = new Proxy(window.WebSocket, {
         return ws;
     },
 });
+window.ReplayRecorderVersion = "1.6";

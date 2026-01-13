@@ -5,10 +5,10 @@
 ██║░╚███║██║░░██║██║░░██║██║░░██║╚█████╔╝░░╚██╔╝░╚██╔╝░██╗╚█████╔╝██║░╚███║███████╗
 ╚═╝░░╚══╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝╚══════╝
 █▀█ █▀▀ █▀█ █░░ ▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄
-█▀▄ ██▄ █▀▀ █▄▄ █▀█ ░█░   █░▀░█ █▄█ █▄▀ v1.5 by Xeltalliv
+█▀▄ ██▄ █▀▀ █▄▄ █▀█ ░█░   █░▀░█ █▄█ █▄▀ v1.6 by Xeltalliv
 
 Record everything that happens in Narrow One matches to view it later as a spectator.
-Packaged on 22nd of November 2025.
+Packaged on 13th of January 2026. https://github.com/Xeltalliv/n1-replay-mod
 
 === Theory behind how it works ===
 Creating replays requires constantly recording and later restoring the states of the game.
@@ -21,13 +21,14 @@ This is exactly what this replay mod does.
 
 
 === Installation ===
-1. Very important: Extract this zip archive. Make sure you do all the further steps on extractd files.
+1. If you are getting this from GitHub, click "Code" -> "Download ZIP".
+2. Very important: Extract this zip archive. Make sure you do all the further steps on extractd files.
    Going inside this zip and trying to run files without extracting will not work!
    After extracting, zip file itself can be deleted.
-2. Install NodeJS (https://nodejs.org/).
-3. Install TamperMonkey (https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo).
-4. If browser is Chromium-based, enable "Developer mode" for TamperMonkey to work (https://www.tampermonkey.net/faq.php?locale=en#Q209)
-5. Create a new script in TamperMonkey and copy-paste the content of "recorderClient.js" in it. Press Ctrl+S to save.
+3. Install NodeJS (https://nodejs.org/).
+4. Install TamperMonkey (https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo).
+5. If browser is Chromium-based, enable "Developer mode" for TamperMonkey to work (https://www.tampermonkey.net/faq.php?locale=en#Q209)
+6. Create a new script in TamperMonkey and copy-paste the content of "recorderClient.js" in it. Press Ctrl+S to save.
 
 
 === Starting recording ===
@@ -43,7 +44,7 @@ Opening multiple tabs is fine. Reloading or closing tabs is fine. Closing browse
 Turning off or rebooting computer without stopping anything is also usually fine.
 "nnc" file extension stands for "Narrow.one Network Capture".
 All the files don't have to be directly in "data". Sub-directories within "data" are also supported.
-So if you feel like origanizing it into directories, you can.
+So if you feel like origanizing it into directories, you can. Renaming files is also fine.
 
 
 === Stopping recording ===
@@ -65,6 +66,7 @@ So if you feel like origanizing it into directories, you can.
 === Usage summary ===
 To record replays you need to have recorder server running and tampermonkey script enabled.
 To view replays you need to have playback server running and open specific url in the browser.
+You can also watch this video: https://www.youtube.com/watch?v=OGkBYNBHdo4
 
 
 === Commands ===
@@ -81,17 +83,40 @@ and press the "Squad" button on the left.
 === Disclaimers ===
 1. Replays depend on the version of the game they were recorded in and therefore
    degarde and expire over time!
-2. For now, the mod sanitizes replays, so that they can't do any harm.
-   While unlikely, future versions of the game might introduce new unsafe things
-   that the mod wouldn't be prepared for.
-
-This mostly applies to if the mod is still somehow functional many months or years later.
-It doesn't break often.
+2. Due to the nature of data that the mod deals with, it has to filter out some of it
+   both during recording and during playback to keep you safe.
+   However, while very rare, future versions of Narrow One might introduce new unsafe things
+   that the mod wouldn't be prepared to deal with.
+   Therefore it is adviced to keep this mod up to date.
+   Using an outdated version to record replays might record sensitive information.
+   Using an outdated version to view replays might cause harm to your account or local saves.
 
 
 === Copyright ===
-You can use, modify, but please do not distribute.
-Especially don't post it to github, greasyfork, pastebin, etc. where it's easily searchable.
+MIT License
+
+Copyright (c) 2024-2026 Xeltalliv
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+This is an unofficial fan-made project not affiliated with, endorsed by,
+or supported by Pelican Party Studios (developers of Narrow One).
 
 
 === A satisfying thing to try ===
@@ -100,7 +125,23 @@ Especially don't post it to github, greasyfork, pastebin, etc. where it's easily
 3. Launch your favourite playlist of fitting music.
 4. Start viewing replay.
 5. Fly around smoothly.
-Spam space bar and shift at different frequencies to smoothly adjust your vertical flight speed.
+   Spam space bar and shift at different frequencies to smoothly adjust your vertical flight speed.
+6. Enjoy flying in sync with music and getting epic panning views of the match.
+
+
+=== Design considerations ===
+1. Having to start recorderServer.mjs may seem inconvenient compared to doing recording
+   entirely within the TamperMonkey script and downloading full replay file at the end.
+   And yes, that could work... until you accidentally forget to save, close or reload tab, etc.
+   That's why to make everyone to only use the safe approach, where it's difficult to accidentally
+   mess up, the approach of recording entirely within the browser will intentionally not be provided.
+   Treat the current thing as seatbelts in cars.
+   It might seem "unneccessary" until something bad happens. Better be safe, than sorry.
+   Another consideration is that while starting it is less convenient, usage is more convenient,
+   since you don't have to constantly remind yourself that it exists and needs to be manually saved.
+2. After viewing replay the client should not be modified in any way.
+   If after viewing replay, without reloading tab user decides to join a normal match, there
+   should be no extra chance of tripping anti-cheat compared to just playing the unmodified game.
 
 
 === Changelog ===
@@ -118,3 +159,4 @@ v1.4 Fixed held item being stuck with wrong weather
      Added "/resume" command
      Added "/getskin" command
 v1.5 Replay recorder client no longer records guest account data
+v1.6 Public release under MIT license
