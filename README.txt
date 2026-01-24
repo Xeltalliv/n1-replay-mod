@@ -142,6 +142,16 @@ or supported by Pelican Party Studios (developers of Narrow One).
 2. After viewing replay the client should not be modified in any way.
    If after viewing replay, without reloading tab user decides to join a normal match, there
    should be no extra chance of tripping anti-cheat compared to just playing the unmodified game.
+3. NNC is not a replay format, it is a format of capturing raw network traffic in both directions.
+   All the data processing to turn it into replays happens in playbackServer.mjs. For replays
+   not all data is used. While it may seem wasteful, it gives a possibility for new versions of
+   this mod to retroactively apply improvements to old replays, without running into the issue
+   of needed data not being captured - everything that could've been captured has been captured.
+   This also gives possibility for NNC files to be reused for things other than replays.
+4. The content of node_modules is provided because people using this are not tech-savy, and
+   requiring them to open terminal in the correct directory and run "npm install" is yet
+   another step that may get them confused. At the same time, this project should be easy to
+   tinker with by anyone, which is why there are no bundlers or build steps.
 
 
 === Changelog ===
