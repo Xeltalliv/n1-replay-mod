@@ -148,4 +148,4 @@ window.WebSocket = new Proxy(window.WebSocket, {
         return ws;
     },
 });
-window.ReplayRecorderVersion = "1.6";
+window.ReplayRecorderVersion = "1.7";

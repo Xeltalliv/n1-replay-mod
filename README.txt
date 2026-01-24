@@ -5,10 +5,10 @@
 ██║░╚███║██║░░██║██║░░██║██║░░██║╚█████╔╝░░╚██╔╝░╚██╔╝░██╗╚█████╔╝██║░╚███║███████╗
 ╚═╝░░╚══╝╚═╝░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝╚══════╝
 █▀█ █▀▀ █▀█ █░░ ▄▀█ █▄█   █▀▄▀█ █▀█ █▀▄
-█▀▄ ██▄ █▀▀ █▄▄ █▀█ ░█░   █░▀░█ █▄█ █▄▀ v1.6 by Xeltalliv
+█▀▄ ██▄ █▀▀ █▄▄ █▀█ ░█░   █░▀░█ █▄█ █▄▀ v1.7 by Xeltalliv
 
 Record everything that happens in Narrow One matches to view it later as a spectator.
-Packaged on 13th of January 2026. https://github.com/Xeltalliv/n1-replay-mod
+Packaged on 24th of January 2026. https://github.com/Xeltalliv/n1-replay-mod
 
 === Theory behind how it works ===
 Creating replays requires constantly recording and later restoring the states of the game.
@@ -170,3 +170,4 @@ v1.4 Fixed held item being stuck with wrong weather
      Added "/getskin" command
 v1.5 Replay recorder client no longer records guest account data
 v1.6 Public release under MIT license
+v1.7 Fixed gamemodes other than CTF not working

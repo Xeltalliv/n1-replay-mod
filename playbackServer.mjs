@@ -396,7 +396,7 @@ class ReplayThing {
 			if (this.state !== ConnectionState.NOTHING_YET) return;
 			this.state = ConnectionState.WAITING_MAP;
 			ws.send(mw.start(SendAction.JOINED_GAME_ID).addUint32(this.gameId).ok());
-			ws.send(mw.start(SendAction.GAMEMODE).addString(this.gamemode).ok());
+			ws.send(mw.start(SendAction.GAMEMODE).addUint32(this.gamemode).ok());
 			ws.send(mw.start(SendAction.GAME_MAP_HASH).addString(this.mapHash).ok());
 			ws.send(mw.start(SendAction.GAME_SEED).addUint32(this.gameSeed).ok());
 		}
