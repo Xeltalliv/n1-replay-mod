@@ -8,7 +8,7 @@
 █▀▄ ██▄ █▀▀ █▄▄ █▀█ ░█░   █░▀░█ █▄█ █▄▀ v1.7 by Xeltalliv
 
 Record everything that happens in Narrow One matches to view it later as a spectator.
-Packaged on 24th of January 2026. https://github.com/Xeltalliv/n1-replay-mod
+v1.7 released on 24th of January 2026. https://github.com/Xeltalliv/n1-replay-mod
 
 === Theory behind how it works ===
 Creating replays requires constantly recording and later restoring the states of the game.
